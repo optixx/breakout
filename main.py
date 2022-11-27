@@ -67,14 +67,22 @@ carryOn = True
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 
+
+pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+last_mouse_pos = pygame.mouse.get_pos()
+mouse_pos_dx = 0
+
 # -------- Main Program Loop -----------
 while carryOn:
     # --- Main event loop
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
             carryOn = False  # Flag that we are done so we exit this loop
-
-        if event.type == pygame.MOUSEBUTTONUP:
+        elif event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_pos_dx = (last_mouse_pos[0] - mouse_pos[0]) * 2
+            last_mouse_pos = mouse_pos
+        elif event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             clicked_bricks = [b for b in all_bricks if b.rect.collidepoint(pos)]
             for brick in clicked_bricks:
@@ -87,6 +95,14 @@ while carryOn:
         paddle.moveLeft(5)
     if keys[pygame.K_RIGHT]:
         paddle.moveRight(5)
+    
+    if mouse_pos_dx > 0:
+        paddle.moveLeft(abs(mouse_pos_dx))
+    elif mouse_pos_dx < 0:
+        paddle.moveRight(abs(mouse_pos_dx))
+    mouse_pos_dx -= (mouse_pos_dx / 2)
+        
+        
 
     # --- Game logic should go here
     all_sprites_list.update()
@@ -147,6 +163,14 @@ while carryOn:
     screen.blit(text, (20, 10))
     text = font.render("Lives: " + str(lives), 1, WHITE)
     screen.blit(text, (650, 10))
+
+    font = pygame.font.Font(None, 20)
+    text = font.render("Paddle: %2.2f" % mouse_pos_dx, 1, WHITE)
+    screen.blit(text, (20, 580))
+    text = font.render("Velocity: " + str(ball.velocity), 1, WHITE)
+    screen.blit(text, (140, 580))
+    text = font.render("Velocity: " + str(ball.rect), 1, WHITE)
+    screen.blit(text, (260, 580))
 
     # Now let's draw all the sprites in one go. (For now we only have 2 sprites!)
     all_sprites_list.draw(screen)
