@@ -95,7 +95,8 @@ while carryOn:
         paddle.moveLeft(5)
     if keys[pygame.K_RIGHT]:
         paddle.moveRight(5)
-    
+
+    # Calc mouse velocity based on horizontal mouse movement  
     if mouse_pos_dx > 0:
         paddle.moveLeft(abs(mouse_pos_dx))
     elif mouse_pos_dx < 0:
