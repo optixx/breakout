@@ -74,6 +74,13 @@ while carryOn:
         if event.type == pygame.QUIT:  # If user clicked close
             carryOn = False  # Flag that we are done so we exit this loop
 
+        if event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+            clicked_bricks = [b for b in all_bricks if b.rect.collidepoint(pos)]
+            for brick in clicked_bricks:
+                score += 1
+                brick.kill()
+
     # Moving the paddle when the use uses the arrow keys
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
@@ -148,7 +155,7 @@ while carryOn:
     pygame.display.flip()
 
     # --- Limit to 60 frames per second
-    clock.tick(60)
+    clock.tick(120)
 
 # Once we have exited the main program loop we can stop the game engine:
 pygame.quit()
