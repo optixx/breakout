@@ -169,7 +169,7 @@ while carryOn:
     screen.blit(text, (20, 580))
     text = font.render("Velocity: " + str(ball.velocity), 1, WHITE)
     screen.blit(text, (140, 580))
-    text = font.render("Velocity: " + str(ball.rect), 1, WHITE)
+    text = font.render("Pos: %i x %i" % (ball.rect.x, ball.rect.y), 1, WHITE)
     screen.blit(text, (260, 580))
 
     # Now let's draw all the sprites in one go. (For now we only have 2 sprites!)
@@ -179,7 +179,7 @@ while carryOn:
     pygame.display.flip()
 
     # --- Limit to 60 frames per second
-    clock.tick(120)
+    clock.tick(60)
 
 # Once we have exited the main program loop we can stop the game engine:
 pygame.quit()
