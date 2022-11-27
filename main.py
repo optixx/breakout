@@ -33,6 +33,7 @@ paddle.rect.x = 350
 paddle.rect.y = 560
 
 # Create the ball sprite
+
 ball = Ball(WHITE, 10, 10)
 ball.rect.x = 345
 ball.rect.y = 195
@@ -67,8 +68,15 @@ carryOn = True
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 
+# Load sound
+brick_sound = pygame.mixer.Sound("assets/sounds/hammer.wav")
+ball_sound = pygame.mixer.Sound("assets/sounds/coin.wav")
+lives_sound = pygame.mixer.Sound("assets/sounds/click_error.wav")
+game_over_sound = pygame.mixer.Sound("assets/sounds/oh_no.wav")
 
-pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+pygame.mouse.set_cursor(
+    (8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0)
+)
 last_mouse_pos = pygame.mouse.get_pos()
 mouse_pos_dx = 0
 
@@ -96,14 +104,12 @@ while carryOn:
     if keys[pygame.K_RIGHT]:
         paddle.moveRight(5)
 
-    # Calc mouse velocity based on horizontal mouse movement  
+    # Calc mouse velocity based on horizontal mouse movement
     if mouse_pos_dx > 0:
         paddle.moveLeft(abs(mouse_pos_dx))
     elif mouse_pos_dx < 0:
         paddle.moveRight(abs(mouse_pos_dx))
-    mouse_pos_dx -= (mouse_pos_dx / 2)
-        
-        
+    mouse_pos_dx -= mouse_pos_dx / 2
 
     # --- Game logic should go here
     all_sprites_list.update()
@@ -122,10 +128,12 @@ while carryOn:
             text = font.render("GAME OVER", 1, WHITE)
             screen.blit(text, (250, 300))
             pygame.display.flip()
+            game_over_sound.play()
             pygame.time.wait(3000)
-
             # Stop the Game
             carryOn = False
+        else:
+            lives_sound.play()
 
     if ball.rect.y < 40:
         ball.velocity[1] = -ball.velocity[1]
@@ -135,6 +143,7 @@ while carryOn:
         ball.rect.x -= ball.velocity[0]
         ball.rect.y -= ball.velocity[1]
         ball.bounce()
+        ball_sound.play()
 
     # Check if there is the ball collides with any of bricks
     brick_collision_list = pygame.sprite.spritecollide(ball, all_bricks, False)
@@ -142,6 +151,7 @@ while carryOn:
         ball.bounce()
         score += 1
         brick.kill()
+        brick_sound.play()
         if len(all_bricks) == 0:
             # Display Level Complete Message for 3 seconds
             font = pygame.font.Font(None, 74)
